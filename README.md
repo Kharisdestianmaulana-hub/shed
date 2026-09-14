@@ -81,7 +81,7 @@ Please ensure that your code adheres to the existing architectural patterns (MVV
 
 ## License
 
-This project is released under a **Custom Source-Available License**. 
+This project is released under a **PolyForm Shield License 1.0.0**. 
 
 You are highly encouraged to read the source code for educational purposes and contribute to this repository via Pull Requests. However, you are **strictly prohibited** from using this source code (in whole or in part) to create, distribute, or publish a new application or derivative work without explicit written permission.
 
@@ -166,7 +166,7 @@ Harap pastikan bahwa kode Anda mematuhi pola arsitektur yang ada (MVVM-A) dan op
 
 ## Lisensi
 
-Proyek ini dirilis di bawah **Lisensi Kustom (Source-Available)**.
+Proyek ini dirilis di bawah **Lisensi PolyForm Shield 1.0.0**.
 
 Anda sangat didorong untuk membaca *source code* untuk tujuan pendidikan dan berkontribusi pada repositori ini melalui *Pull Request*. Namun, Anda **dilarang keras** menggunakan kode sumber ini (secara keseluruhan atau sebagian) untuk membuat, mendistribusikan, atau memublikasikan aplikasi baru atau karya turunan tanpa izin tertulis yang eksplisit.
 

@@ -1,3 +1,4 @@
+// Copyright (c) 2026 Kharis Destian Maulana. All rights reserved.
 // Menambahkan FilterMode yang hilang
 enum FilterMode: String, CaseIterable {
     case all = "Semua"
