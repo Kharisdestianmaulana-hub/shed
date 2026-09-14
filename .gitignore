@@ -51,3 +51,10 @@ Release_DMG/
 create-dmg
 /*.swift
 dmg_*.png
+
+# Local documentation (Do not push)
+PRD.md
+architecture.md
+aplikasi.md
+design_system.md
+rule_engine.md
