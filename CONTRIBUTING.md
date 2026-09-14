@@ -54,6 +54,8 @@ To maintain the performance and safety of Shed, please adhere to the following t
 
 If your changes involve file deletion or system modifications, you may need to grant the locally compiled application Full Disk Access in your System Settings during testing.
 
-## License
+## License & Contributor Agreement
 
-By contributing to Shed, you agree that your contributions will be licensed under the MIT License.
+Shed operates under a custom Source-Available License. By submitting a Pull Request or contributing code to this repository, you explicitly agree that:
+1. You grant the repository owner a perpetual, worldwide, non-exclusive, royalty-free license to use, modify, and distribute your contributions.
+2. You understand that the source code of Shed cannot be used by you or anyone else to create derivative applications or competing products outside of this official repository.

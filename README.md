@@ -81,4 +81,8 @@ Please ensure that your code adheres to the existing architectural patterns (MVV
 
 ## License
 
-This project is licensed under the MIT License. See the `LICENSE` file for more details.
+This project is released under a **Custom Source-Available License**. 
+
+You are highly encouraged to read the source code for educational purposes and contribute to this repository via Pull Requests. However, you are **strictly prohibited** from using this source code (in whole or in part) to create, distribute, or publish a new application or derivative work without explicit written permission.
+
+See the `LICENSE` file for full legal details.
