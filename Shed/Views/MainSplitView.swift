@@ -2380,17 +2380,44 @@ class AppUninstallerViewModel: ObservableObject {
             urlsToTrash.append(contentsOf: app.associatedURLs)
         }
         
-        guard !urlsToTrash.isEmpty else { return }
+        // Filter out URLs that don't exist to prevent NSWorkspace from throwing an error
+        let existingURLs = urlsToTrash.filter { FileManager.default.fileExists(atPath: $0.path) }
         
-        workspace.recycle(urlsToTrash) { _, error in
+        guard !existingURLs.isEmpty else { 
+            DispatchQueue.main.async {
+                self.apps.removeAll { $0.isSelected }
+                ScanCacheManager.shared.uninstallerCache = self.apps
+            }
+            return 
+        }
+        
+        workspace.recycle(existingURLs) { trashedURLs, error in
             DispatchQueue.main.async {
                 if let error = error {
-                    print("Gagal menghapus: \(error.localizedDescription)")
-                } else {
-                    let saved = selectedApps.reduce(0) { $0 + $1.totalSize }
-                    DailyReportManager.shared.addSavings(saved)
-                    self.apps.removeAll { $0.isSelected }
+                    print("Recycle info: \(error.localizedDescription)")
                 }
+                
+                var appsToRemove: [UUID] = []
+                var saved: Int64 = 0
+                
+                for app in selectedApps {
+                    let appURL = app.appURL
+                    let isMainAppTrashed = (appURL == nil) || (trashedURLs?.keys.contains(appURL!) == true) || !FileManager.default.fileExists(atPath: appURL!.path)
+                    
+                    if isMainAppTrashed {
+                        appsToRemove.append(app.id)
+                        saved += app.totalSize
+                    }
+                }
+                
+                if saved > 0 {
+                    DailyReportManager.shared.addSavings(saved)
+                }
+                
+                withAnimation {
+                    self.apps.removeAll { appsToRemove.contains($0.id) }
+                }
+                ScanCacheManager.shared.uninstallerCache = self.apps
             }
         }
     }
@@ -4439,16 +4466,40 @@ class DeveloperCleanupViewModel: ObservableObject {
             urlsToTrash.append(contentsOf: item.urls)
         }
         
-        guard !urlsToTrash.isEmpty else { return }
+        let existingURLs = urlsToTrash.filter { FileManager.default.fileExists(atPath: $0.path) }
         
-        workspace.recycle(urlsToTrash) { _, error in
+        guard !existingURLs.isEmpty else { 
+            DispatchQueue.main.async {
+                self.items.removeAll { $0.isSelected }
+            }
+            return 
+        }
+        
+        workspace.recycle(existingURLs) { trashedURLs, error in
             DispatchQueue.main.async {
                 if let error = error {
-                    print("Gagal menghapus: \(error.localizedDescription)")
-                } else {
-                    let saved = selected.reduce(0) { $0 + $1.size }
+                    print("Recycle info: \(error.localizedDescription)")
+                }
+                
+                var itemsToRemove: [UUID] = []
+                var saved: Int64 = 0
+                
+                for item in selected {
+                    // Check if at least one of its URLs was successfully trashed or no longer exists
+                    let allUrlsGone = item.urls.allSatisfy { url in
+                        (trashedURLs?.keys.contains(url) == true) || !FileManager.default.fileExists(atPath: url.path)
+                    }
+                    if allUrlsGone {
+                        itemsToRemove.append(item.id)
+                        saved += item.size
+                    }
+                }
+                
+                if saved > 0 {
                     DailyReportManager.shared.addSavings(saved)
-                    self.items.removeAll { $0.isSelected }
+                }
+                withAnimation {
+                    self.items.removeAll { itemsToRemove.contains($0.id) }
                 }
             }
         }
