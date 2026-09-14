@@ -86,3 +86,88 @@ This project is released under a **Custom Source-Available License**.
 You are highly encouraged to read the source code for educational purposes and contribute to this repository via Pull Requests. However, you are **strictly prohibited** from using this source code (in whole or in part) to create, distribute, or publish a new application or derivative work without explicit written permission.
 
 See the `LICENSE` file for full legal details.
+
+---
+
+# Shed (Bahasa Indonesia)
+
+Aplikasi utilitas macOS *native* yang dibangun dengan SwiftUI, dirancang untuk manajemen penyimpanan cerdas, pembersihan sistem, dan pengoptimalan performa. Shed bertujuan memberikan alternatif yang aman, transparan, dan berperforma tinggi dibandingkan alat pembersih macOS tradisional dengan memanfaatkan konkurensi Swift modern dan API *native* macOS.
+
+## Ringkasan
+
+Shed dibangun dari awal untuk mengatasi masalah umum yang ditemukan pada perangkat lunak pemeliharaan macOS. Alih-alih mengandalkan mekanisme pembersihan yang tidak jelas, Shed memberikan transparansi penuh terhadap apa yang sedang dianalisis dan dihapus. Aplikasi ini memanfaatkan kerangka kerja Apple modern untuk memastikan stabilitas dan efisiensi, beroperasi sepenuhnya dalam batas protokol keamanan macOS.
+
+## Fitur Utama
+
+### Dasbor Kesehatan Mac
+Dasbor ini berfungsi sebagai pusat pemantauan status sistem Anda. Menyediakan wawasan *real-time* mengenai penggunaan RAM aktif, metrik suhu CPU, dan gambaran komprehensif tentang alokasi ruang disk Anda.
+
+### Penganalisis & Perayap Penyimpanan (Storage Crawler)
+Shed menggunakan perayap penyimpanan yang sangat konkuren, didukung oleh model *async/await* dan Actor dari Swift. Fitur ini dapat memindai direktori dalam secara cepat, baik di folder *home* pengguna maupun *root* sistem, tanpa membuat antarmuka membeku (*freeze*). Mengelompokkan file secara cerdas dan memetakan penggunaan disk secara visual.
+
+### Uninstaller Aplikasi
+Menyeret aplikasi ke Tempat Sampah (*Trash*) seringkali meninggalkan gigabyte data *cache*. Uninstaller Aplikasi Shed menyelesaikan masalah ini dengan melacak file tersembunyi yang terkait, termasuk file preferensi `.plist`, direktori `/Library/Application Support`, dan *cache* sistem, memastikan penghapusan yang benar-benar bersih.
+
+### Pencari Duplikat Kriptografis
+Berbeda dengan pencari duplikat biasa yang hanya membandingkan nama dan ukuran file, Shed menggunakan *hashing* kriptografi SHA-256 secara penuh untuk mengidentifikasi file duplikat yang benar-benar identik. Proses ini memindai secara iteratif untuk mencegah lonjakan memori, memastikan data Anda aman dan hanya duplikat asli yang ditandai.
+
+### Brankas Karantina
+Keamanan adalah perhatian utama saat menghapus file sistem. Brankas Karantina bertindak sebagai langkah perantara sebelum penghapusan permanen. File sensitif dipindahkan ke brankas aman di mana mereka dapat dipulihkan jika diperlukan. Tugas latar belakang otomatis secara aman menghapus item yang telah berada di brankas selama lebih dari 30 hari.
+
+### Mesin Aturan Cerdas
+Shed mengimplementasikan mesin berbasis aturan untuk pemeliharaan otomatis. Pengguna dapat mengandalkan aturan macOS yang telah ditentukan sebelumnya untuk membersihkan log lama, data turunan Xcode, dan *cache* sistem tanpa menghapus komponen sistem operasi yang penting secara tidak sengaja.
+
+### Manajer Startup
+Kendalikan waktu *boot* Mac Anda. Shed terintegrasi langsung dengan `launchctl` (*bootstrap* dan *bootout*) untuk memungkinkan pengguna melihat, mengelola, dan mengaktifkan/menonaktifkan daemon sistem dan agen login pengguna secara *real-time*.
+
+### Lokalisasi Asli
+Shed secara otomatis beradaptasi dengan bahasa pilihan pengguna. Saat ini memiliki lokalisasi penuh terjemahan manusia untuk bahasa Inggris dan Indonesia.
+
+## Arsitektur Teknis
+
+Shed dibangun sepenuhnya menggunakan paradigma Swift modern:
+- **Kerangka UI**: 100% SwiftUI (Target macOS 12.0 ke atas).
+- **Arsitektur**: MVVM-A (Model-View-ViewModel-Actor) memastikan bahwa semua operasi I/O yang berat diisolasi dari *thread* UI utama.
+- **Konkurensi**: Penggunaan ekstensif Swift Async/Await, TaskGroups, dan Actors untuk mencegah *race conditions* selama pencacahan file berkecepatan tinggi.
+- **I/O Disk**: Integrasi langsung dengan `NSWorkspace`, `FileManager`, dan `URLResourceValues` untuk performa optimal.
+
+## Instalasi
+
+### Untuk Pengguna
+Untuk menginstal Shed tanpa perlu mengompilasi kodenya sendiri:
+1. Buka tab **Releases** di repositori ini.
+2. Unduh file `Shed-vX.X.dmg` terbaru.
+3. Buka file *disk image* tersebut dan tarik (drag) aplikasi Shed ke dalam folder `/Applications`.
+
+### Untuk Pengembang (Build dari Source)
+Untuk mengompilasi dan menjalankan aplikasi secara lokal:
+1. Klon (*clone*) repositori ini:
+   ```bash
+   git clone https://github.com/Kharisdestianmaulana-hub/shed.git
+   ```
+2. Buka `Shed.xcodeproj` menggunakan Xcode 14 atau lebih baru.
+3. Pastikan skema (*scheme*) aktif diatur ke **Shed** dan destinasi ke **My Mac**.
+4. Tekan `Cmd + R` untuk melakukan *build* dan menjalankan aplikasi.
+
+## Membuat Rilis Installer (DMG)
+
+Jika Anda ingin mendistribusikan aplikasi atau membuat installer `.dmg` Anda sendiri, Anda dapat menggunakan perintah berikut untuk membuat *binary* rilis:
+
+```bash
+xcodebuild -project Shed.xcodeproj -scheme Shed -configuration Release -derivedDataPath ./DerivedData CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO clean build
+```
+*Catatan: Anda akan memerlukan utilitas tambahan seperti `create-dmg` untuk membungkus `.app` yang dihasilkan ke dalam format file instalasi DMG.*
+
+## Kontribusi
+
+Kontribusi sangat didorong dan diterima dengan baik. Jika Anda memiliki ide untuk fitur baru, perbaikan *bug*, atau peningkatan untuk kode yang ada, silakan ikuti langkah-langkah di file `CONTRIBUTING.md`.
+
+Harap pastikan bahwa kode Anda mematuhi pola arsitektur yang ada (MVVM-A) dan operasi berat sama sekali tidak memblokir *Main Thread*.
+
+## Lisensi
+
+Proyek ini dirilis di bawah **Lisensi Kustom (Source-Available)**.
+
+Anda sangat didorong untuk membaca *source code* untuk tujuan pendidikan dan berkontribusi pada repositori ini melalui *Pull Request*. Namun, Anda **dilarang keras** menggunakan kode sumber ini (secara keseluruhan atau sebagian) untuk membuat, mendistribusikan, atau memublikasikan aplikasi baru atau karya turunan tanpa izin tertulis yang eksplisit.
+
+Lihat file `LICENSE` untuk detail hukum selengkapnya.

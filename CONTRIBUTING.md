@@ -59,3 +59,67 @@ If your changes involve file deletion or system modifications, you may need to g
 Shed operates under a custom Source-Available License. By submitting a Pull Request or contributing code to this repository, you explicitly agree that:
 1. You grant the repository owner a perpetual, worldwide, non-exclusive, royalty-free license to use, modify, and distribute your contributions.
 2. You understand that the source code of Shed cannot be used by you or anyone else to create derivative applications or competing products outside of this official repository.
+
+---
+
+# Panduan Berkontribusi untuk Shed (Bahasa Indonesia)
+
+Pertama-tama, terima kasih telah mempertimbangkan untuk berkontribusi ke Shed. Orang-orang seperti Anda lah yang membuat dunia _open source_ (dan *source-available*) menjadi luar biasa.
+
+Shed adalah aplikasi utilitas macOS yang dibangun sepenuhnya (*natively*) menggunakan SwiftUI. Tujuan kami adalah menyediakan alat manajemen penyimpanan yang sangat cepat, transparan, dan aman. Kami menyambut kontribusi yang sejalan dengan visi ini, baik itu berupa perbaikan *bug*, penambahan fitur baru, atau peningkatan dokumentasi.
+
+## Kode Etik
+
+Dengan berpartisipasi dalam proyek ini, Anda diharapkan menjunjung tinggi lingkungan yang ramah dan profesional. Harap bersikap hormat kepada kontributor lain. Pelecehan, bahasa diskriminatif, atau perilaku tidak profesional tidak akan ditoleransi.
+
+## Bagaimana Saya Bisa Berkontribusi?
+
+### Melaporkan Bug
+Jika Anda menemukan *bug*, silakan buka *Issue* (Masalah) di repositori GitHub ini. Saat melaporkan *bug*, harap sertakan:
+- Judul yang jelas dan deskriptif.
+- Versi Shed dan versi macOS yang Anda gunakan.
+- Langkah-langkah pasti untuk mereproduksi masalah tersebut.
+- Perilaku yang diharapkan (*expected behavior*) vs perilaku aktual (*actual behavior*).
+- Log atau laporan *crash* yang relevan.
+
+### Menyarankan Peningkatan
+Kami selalu terbuka untuk ide-ide baru. Jika Anda ingin mengusulkan fitur baru:
+- Buka *Issue* yang dikategorikan sebagai *enhancement* (peningkatan).
+- Jelaskan fitur tersebut secara detail dan jelaskan masalah spesifik yang diselesaikannya.
+- Jika memungkinkan, sediakan desain (*mockup*) atau referensi ke pola desain *native* macOS yang cocok dengan antarmuka SwiftUI.
+
+### Pull Requests (Mengirim Kode)
+Sudah siap untuk menulis kode? Bagus! Silakan ikuti alur kerja berikut:
+
+1. **Fork Repositori**: Buat _fork_ dari repositori `shed` ke akun GitHub Anda sendiri.
+2. **Klon (Clone)**: Kloning repositori hasil *fork* ke komputer lokal Anda (`git clone https://github.com/YOUR-USERNAME/shed.git`).
+3. **Buat Branch**: Buat _branch_ baru untuk fitur atau perbaikan *bug* Anda (`git checkout -b feature/nama-fitur-anda`).
+4. **Pengembangan (Develop)**: Tulis kode Anda. Pastikan Anda mematuhi pedoman arsitektur yang tercantum di bawah ini.
+5. **Uji Coba (Test)**: Bangun (*build*) dan uji aplikasi secara lokal. Pastikan tidak ada fitur lama yang rusak.
+6. **Commit**: Lakukan *commit* perubahan Anda dengan pesan yang jelas dan deskriptif.
+7. **Push**: *Push* *branch* Anda ke repositori *fork* milik Anda (`git push origin feature/nama-fitur-anda`).
+8. **Kirim Pull Request**: Buka _Pull Request_ (PR) yang ditujukan ke branch `main` dari repositori resmi Shed. Jelaskan perubahan Anda secara menyeluruh dalam deskripsi PR.
+
+## Pedoman Arsitektur
+
+Untuk menjaga performa dan keamanan Shed, harap patuhi pedoman teknis berikut saat menyumbangkan kode:
+
+- **Wajib SwiftUI**: Semua antarmuka pengguna harus dibangun menggunakan SwiftUI. Hindari penggunaan AppKit (NSView/NSViewController) kembali, kecuali jika benar-benar diperlukan untuk fitur yang tidak dapat ditangani SwiftUI secara bawaan.
+- **Pola MVVM-A**: Kami menggunakan arsitektur *Model-View-ViewModel-Actor*. *View* hanya menangani *rendering* UI. *ViewModel* mengelola status (_state_) dan memformat data. Beban kerja yang berat, terutama pemindaian sistem *file*, wajib didelegasikan ke *Actors*.
+- **Konkurensi**: Jangan memblokir *Main Thread*! Proses I/O pada *disk*, pencacahan *file*, atau komputasi berat apa pun harus dilakukan secara asinkron menggunakan struktur `async/await` dan `Task` di Swift.
+- **Utamakan Keselamatan (Safety First)**: Karena Shed berkaitan dengan penghapusan *file*, setiap tindakan destruktif harus menyertakan dialog konfirmasi (*alert*) kepada pengguna. Hindari penggunaan *force-unwrap optionals* (`!`); tangani kesalahan secara anggun (_graceful handling_) untuk mencegah terjadinya *crash*.
+
+## Pengaturan Lingkungan Pengembangan (Development Setup)
+
+1. Anda harus menginstal Xcode 14 atau versi yang lebih baru.
+2. Buka `Shed.xcodeproj`.
+3. Atur skema (*scheme*) yang aktif ke **Shed** dan destinasi ke **My Mac**.
+4. Tekan `Cmd + R` untuk mengompilasi dan menjalankan aplikasi.
+
+Jika perubahan yang Anda buat melibatkan penghapusan *file* atau modifikasi tingkat sistem, Anda mungkin perlu memberikan Akses Disk Penuh (*Full Disk Access*) untuk aplikasi Shed yang Anda kompilasi secara lokal tersebut di Pengaturan Sistem macOS (System Settings > Privacy & Security) selama masa pengujian.
+
+## Perjanjian Kontributor (Lisensi)
+
+Shed beroperasi di bawah Lisensi Kustom yang bersumber terbuka (*Source-Available License*). Dengan mengirimkan *Pull Request* atau menyumbangkan kode ke repositori ini, Anda secara eksplisit setuju bahwa:
+1. Anda memberikan lisensi yang abadi, di seluruh dunia, non-eksklusif, bebas royalti kepada pemilik repositori untuk menggunakan, memodifikasi, dan mendistribusikan kontribusi Anda.
+2. Anda memahami bahwa kode sumber (*source code*) Shed sama sekali **tidak boleh** digunakan oleh Anda atau siapa pun untuk membuat aplikasi turunan atau produk pesaing di luar repositori resmi ini.
